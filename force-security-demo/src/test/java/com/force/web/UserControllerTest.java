@@ -1,8 +1,15 @@
 package com.force.web;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,21 +37,54 @@ public class UserControllerTest {
 
 	@Test
 	public void whenQuerySuccess() throws Exception {
-		String result = mockMvc.perform(get("/user").param("userName", "dfdsfd").param("ageTo", "1111")
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk())
-				.andExpect(jsonPath("$.length()").value(3)).andReturn().getResponse().getContentAsString();
+		String result = mockMvc
+				.perform(get("/user").param("userName", "dfdsfd").param("ageTo", "1111")
+						.contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(3)).andReturn().getResponse()
+				.getContentAsString();
 		System.out.println(result);
 	}
 
 	@Test
 	public void whenGenInfoSuccess() throws Exception {
-		String result =  mockMvc.perform(get("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk())
-				.andExpect(jsonPath("$.userName").value("tom")).andReturn().getResponse().getContentAsString();
+		String result = mockMvc.perform(get("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.userName").value("tom")).andReturn().getResponse()
+				.getContentAsString();
 		System.out.println(result);
+	}
+
+	@Test
+	public void whenGenInfoFail() throws Exception {
+		mockMvc.perform(get("/user/a").contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().is4xxClientError());
+	}
+
+	@Test
+	public void whenCreateSuccess() throws Exception {
+		Date date = new Date();
+		System.out.println(date.getTime());
+
+		String content = "{\"userName\":\"tom\",\"password\":null,\"birthday\":" + date.getTime() + "}";
+		String reuslt = mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON_UTF8).content(content))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.id").value("1")).andReturn().getResponse()
+				.getContentAsString();
+		System.out.println(reuslt);
 	}
 	
 	@Test
-	public void whenGenInfoFail() throws Exception {
-		mockMvc.perform(get("/user/a").contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is4xxClientError());
+	public void whenUpdateSuccess() throws Exception {
+		Date date = new Date(LocalDateTime.now().plusYears(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+		System.out.println(date.getTime());
+
+		String content = "{\"id\":\"1\",\"userName\":\"tom\",\"password\":null,\"birthday\":" + date.getTime() + "}";
+		String reuslt = mockMvc.perform(put("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8).content(content))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.id").value("1")).andReturn().getResponse()
+				.getContentAsString();
+		System.out.println(reuslt);
+	}
+	@Test
+	public void whenDeleteSuccess() throws Exception {
+		mockMvc.perform(delete("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isOk());
 	}
 }

@@ -12,3 +12,7 @@ spring:
     user:
       name: admin
       password: admin
+#返回时间转换为毫秒
+  jackson:
+    serialization: 
+      write-dates-as-timestamps: true
