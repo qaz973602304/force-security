@@ -1,11 +1,16 @@
 package com.force.dto;
 
-import org.springframework.web.bind.annotation.RequestParam;
+import com.fasterxml.jackson.annotation.JsonView;
 
 public class User {
+	public interface UserSimpleView {};
+
+	public interface UserDetailView extends UserSimpleView {};
+
 	private String userName;
 	private String password;
 
+	@JsonView(UserSimpleView.class)
 	public String getUserName() {
 		return userName;
 	}
@@ -17,14 +22,10 @@ public class User {
 	public String getPassword() {
 		return password;
 	}
-	
-	public void setPassword( String password) {
-		this.password = password;
-	}
 
-	@Override
-	public String toString() {
-		return "User [userName=" + userName + ", password=" + password + "]";
+	@JsonView(UserDetailView.class)
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

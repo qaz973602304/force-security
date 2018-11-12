@@ -30,15 +30,17 @@ public class UserControllerTest {
 
 	@Test
 	public void whenQuerySuccess() throws Exception {
-		mockMvc.perform(get("/user").param("userName", "dfdsfd").param("ageTo", "1111")
+		String result = mockMvc.perform(get("/user").param("userName", "dfdsfd").param("ageTo", "1111")
 				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk())
-				.andExpect(jsonPath("$.length()").value(3));
+				.andExpect(jsonPath("$.length()").value(3)).andReturn().getResponse().getContentAsString();
+		System.out.println(result);
 	}
 
 	@Test
 	public void whenGenInfoSuccess() throws Exception {
-		mockMvc.perform(get("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk())
-				.andExpect(jsonPath("$.userName").value("tom"));
+		String result =  mockMvc.perform(get("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.userName").value("tom")).andReturn().getResponse().getContentAsString();
+		System.out.println(result);
 	}
 	
 	@Test
