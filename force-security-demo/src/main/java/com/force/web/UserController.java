@@ -22,37 +22,45 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.force.dto.User;
 import com.force.dto.UserQueryCondition;
+import com.force.exception.UserNotExistException;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+	@ApiOperation("创建用户服务")
 	@PostMapping
-	public User create(@Valid @RequestBody User user,BindingResult errors) {
-		if(errors.hasErrors()) {
+	public User create(@Valid @RequestBody User user, BindingResult errors) {
+		if (errors.hasErrors()) {
 			errors.getAllErrors().stream().forEach(error -> System.out.println(error.getDefaultMessage()));
 		}
 		System.out.println(user.getId());
 		System.out.println(user.getUserName());
 		System.out.println(user.getPassword());
 		System.out.println(user.getBirthday());
-		
+
 		user.setId("1");
 		return user;
 	}
-	
+
+	@ApiOperation("修改用户服务")
 	@PutMapping("/{id:\\d+}")
-	public User update(@Valid @RequestBody User user,BindingResult errors) {
-		if(errors.hasErrors()) {
+	public User update(@Valid @RequestBody User user, BindingResult errors) {
+		if (errors.hasErrors()) {
 			errors.getAllErrors().stream().forEach(error -> System.out.println(error.getDefaultMessage()));
 		}
 		System.out.println(user.getId());
 		System.out.println(user.getUserName());
 		System.out.println(user.getPassword());
 		System.out.println(user.getBirthday());
-		
+
 		user.setId("1");
 		return user;
 	}
+
+	@ApiOperation("查询用户服务")
 	@JsonView(User.UserSimpleView.class)
 	@GetMapping
 	public List<User> query(UserQueryCondition userQueryCondition,
@@ -64,24 +72,28 @@ public class UserController {
 		userlist.add(new User());
 		return userlist;
 	}
-	@JsonView(User.UserDetailView.class)
-	@GetMapping("/{id:\\d+}")
-	public User getInfo(@PathVariable String id) {
-		User user = new User();
-		user.setUserName("tom");
-		return user;
-	}
-	@DeleteMapping("/{id:\\d+}")
-	public void delete(@PathVariable String id) {
-		System.out.println(id);
-	}
-//	测试自定义异常
+
+//	@ApiOperation("根据ID查询用户服务")
 //	@JsonView(User.UserDetailView.class)
 //	@GetMapping("/{id:\\d+}")
 //	public User getInfo(@PathVariable String id) {
-//		throw new UserNotExistException("sdfs");
-////		User user = new User();
-////		user.setUserName("tom");
-////		return user;
+//		User user = new User();
+//		user.setUserName("tom");
+//		return user;
 //	}
+
+	@ApiOperation("删除用户服务")
+	@DeleteMapping("/{id:\\d+}")
+	public void delete(@ApiParam(value = "删除ID") @PathVariable String id) {
+		System.out.println(id);
+	}
+//	测试自定义异常
+	@JsonView(User.UserDetailView.class)
+	@GetMapping("/{id:\\d+}")
+	public User getInfo(@PathVariable String id) {
+		throw new UserNotExistException("sdfs");
+//		User user = new User();
+//		user.setUserName("tom");
+//		return user;
+	}
 }

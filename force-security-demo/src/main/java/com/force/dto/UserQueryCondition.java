@@ -1,8 +1,13 @@
 package com.force.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class UserQueryCondition {
+	@ApiModelProperty(value="用户名")
 	private String userName;
+	@ApiModelProperty(value="年龄起始")
 	private int age;
+	@ApiModelProperty(value="年龄结束")
 	private int ageTo;
 	private String xxx;
 
